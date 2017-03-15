@@ -8,11 +8,13 @@
 
 import UIKit
 import FirebaseDatabase
+import FirebaseAuth
 
 class GroceryListTableViewController: UITableViewController {
     
     
     let ref = FIRDatabase.database().reference(withPath: "grocery-items")
+    let usersRef = FIRDatabase.database().reference(withPath: "online")
     
     // MARK: Constants1
     let listToUsers = "ListToUsers"
@@ -28,18 +30,52 @@ class GroceryListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        ref.queryOrdered(byChild: "completed").observe(.value, with: { snapshot in
+            
+            var newItems: [GroceryItem] = []
+            
+            for item in snapshot.children {
+                let groceryItem = GroceryItem(snapshot: item as! FIRDataSnapshot)
+                newItems.append(groceryItem)
+            }
+            
+            self.items = newItems
+            
+            self.tableView.reloadData()
         
+        
+        })
+        
+        usersRef.observe(.value, with: { snapshot in
+            if snapshot.exists() {
+                self.userCountBarButtonItem?.title = snapshot.childrenCount.description
+            } else {
+                self.userCountBarButtonItem?.title = "0"
+            }
+        })
+
         tableView.allowsMultipleSelectionDuringEditing = false
         
         userCountBarButtonItem = UIBarButtonItem(title: "1",
                                                  style: .plain,
                                                  target: self,
                                                  action: #selector(userCountButtonDidTouch))
-        userCountBarButtonItem.tintColor = UIColor.white
+        userCountBarButtonItem.tintColor = UIColor.black
         navigationItem.leftBarButtonItem = userCountBarButtonItem
         
-        user = User(uid: "FakeId", email: "hungry@person.food")
+        FIRAuth.auth()!.addStateDidChangeListener { auth, user in
+            guard let user = user else { return }
+            self.user = User(authData: user)
+            // 1
+            let currentUserRef = self.usersRef.child(self.user.uid)
+            // 2
+            currentUserRef.setValue(self.user.email)
+            // 3
+            currentUserRef.onDisconnectRemoveValue()
 
+        }
+
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -71,19 +107,23 @@ class GroceryListTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            items.remove(at: indexPath.row)
-            tableView.reloadData()
+            let groceryItem = items[indexPath.row]
+            groceryItem.ref?.removeValue()
+//            items.remove(at: indexPath.row)
+//            tableView.reloadData()
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
-        var groceryItem = items[indexPath.row]
+        let groceryItem = items[indexPath.row]
         let toggledCompletion = !groceryItem.completed
         
         toggleCellCheckbox(cell, isCompleted: toggledCompletion)
-        groceryItem.completed = toggledCompletion
-        tableView.reloadData()
+        
+        groceryItem.ref?.updateChildValues(["completed": toggledCompletion])
+//        groceryItem.completed = toggledCompletion
+//        tableView.reloadData()
     }
     
     func toggleCellCheckbox(_ cell: UITableViewCell, isCompleted: Bool) {
@@ -122,8 +162,7 @@ class GroceryListTableViewController: UITableViewController {
                                         // 4
                                         groceryItemRef.setValue(groceryItem.toAnyObject())
                                         
-                                        self.items.append(groceryItem)
-                                        self.tableView.reloadData()
+               
         }
         
         let cancelAction = UIAlertAction(title: "Cancel",

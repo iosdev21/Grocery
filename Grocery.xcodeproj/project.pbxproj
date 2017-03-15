@@ -22,6 +22,7 @@
 
 /* Begin PBXFileReference section */
 		26AB4EAEC995195B2FC9FED4 /* Pods-Grocery.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Grocery.release.xcconfig"; path = "Pods/Target Support Files/Pods-Grocery/Pods-Grocery.release.xcconfig"; sourceTree = "<group>"; };
+		841D6AC81E796E5F00DCBA4F /* Grocery.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Grocery.entitlements; sourceTree = "<group>"; };
 		84C51D961E783E1C0073C61F /* Grocery.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Grocery.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		84C51D991E783E1C0073C61F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		84C51D9E1E783E1C0073C61F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -88,6 +89,7 @@
 		84C51D981E783E1C0073C61F /* Grocery */ = {
 			isa = PBXGroup;
 			children = (
+				841D6AC81E796E5F00DCBA4F /* Grocery.entitlements */,
 				84C51DB51E7889A10073C61F /* SupportFiles */,
 				84C51DB41E7889980073C61F /* Others */,
 				84C51DB31E7889780073C61F /* Layouts */,
@@ -178,7 +180,13 @@
 				TargetAttributes = {
 					84C51D951E783E1C0073C61F = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 976MB99EDY;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -394,6 +402,8 @@
 			baseConfigurationReference = 91C7B86C2A5AC3ED9683B859 /* Pods-Grocery.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Grocery/Grocery.entitlements;
+				DEVELOPMENT_TEAM = 976MB99EDY;
 				INFOPLIST_FILE = Grocery/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.harry.grocery;
@@ -407,6 +417,8 @@
 			baseConfigurationReference = 26AB4EAEC995195B2FC9FED4 /* Pods-Grocery.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Grocery/Grocery.entitlements;
+				DEVELOPMENT_TEAM = 976MB99EDY;
 				INFOPLIST_FILE = Grocery/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.harry.grocery;
